@@ -39,14 +39,17 @@ class SpeechViewModel {
         ]))
         let category: String
 
-        @Guide(description: "Total amount, positive number")
-        let amount: Double
+        @Guide(description: "The specific item purchased, if mentioned (e.g., 'Big Mac', 'coffee'). Omit if not mentioned.")
+        let item: String?
 
-        @Guide(description: "ISO currency code or symbol inferred from text, e.g., USD, IDR, $, Rp")
-        let currency: String
+        @Guide(description: "Total amount, positive number. Omit if not mentioned.")
+        let amount: Double?
 
-        @Guide(description: "Merchant or source name if present")
-        let merchant: String
+        @Guide(description: "ISO currency code or symbol. Omit if not mentioned.")
+        let currency: String?
+
+        @Guide(description: "Merchant or source name. Omit if not mentioned.")
+        let merchant: String?
 
         @Guide(description: "Primary event date from recording time (ISO-8601). If utterance specifies another date/time explicitly, put that in dateMentioned and leave date as recording time.")
         let date: String?
@@ -66,6 +69,7 @@ class SpeechViewModel {
 
                 Rules:
                 - Respond strictly using the FinanceEvent schema.
+                - Extract the specific item purchased into the 'item' field if it is mentioned.
                 - The 'category' must be one of: Food & Drink, Transport, Shopping, Bills & Utilities, Entertainment, Health, Income, Transfer, Other.
                 - The 'type' must be one of: expense, income, transfer.
                 - Infer category from merchant or phrasing; default to "Other" if unsure.
@@ -150,6 +154,7 @@ class SpeechViewModel {
             let fixedEvent = FinanceEvent(
                 type: event.type,
                 category: event.category,
+                item: event.item,
                 amount: event.amount,
                 currency: event.currency,
                 merchant: event.merchant,
