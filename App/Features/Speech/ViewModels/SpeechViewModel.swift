@@ -27,96 +27,15 @@ class SpeechViewModel {
         let type: String
 
         @Guide(.anyOf([
-            // Core expenses
-            "food_and_drink",
-            "groceries",
-            "transport",
-            "ride_hailing",
-            "fuel",
-            "parking",
-            "tolls",
-            "utilities",
-            "electricity",
-            "water",
-            "gas",
-            "internet",
-            "mobile_plan",
-            "rent",
-            "mortgage",
-            "home_maintenance",
-            "insurance",
-
-            // Financial services
-            "bank_fees",
-            "atm_fees",
-            "interest",
-            "loan_payment",
-            "taxes",
-
-            // Daily spending
-            "shopping",
-            "convenience",
-            "personal_care",
-            "household_supplies",
-
-            // Lifestyle
-            "entertainment",
-            "subscriptions",
-            "gaming",
-            "sports_and_fitness",
-
-            // Food services
-            "restaurants",
-            "cafes",
-            "delivery_fees",
-
-            // Health & education
-            "healthcare",
-            "medicine",
-            "medical_fees",
-            "education",
-            "tuition",
-            "books_and_supplies",
-
-            // Travel
-            "travel",
-            "accommodation",
-            "airfare",
-            "train_bus",
-            "visa_and_fees",
-
-            // Children & family
-            "childcare",
-            "family_support",
-
-            // Giving
-            "charity",
-            "zakat_infaq_sedekah",
-
-            // Digital wallets & top-ups (ID specific)
-            "e_wallet_topup",
-            "pulsa_topup",
-            "data_package",
-
-            // Work & biz
-            "work_expense",
-            "office_supplies",
-            "software",
-
-            // Income categories (for type=income)
-            "salary",
-            "bonus",
-            "freelance",
-            "refund",
-            "cashback",
-            "investment_income",
-
-            // Transfers
-            "transfer",
-            "internal_transfer",
-
-            // Catch-all
-            "other"
+            "Food & Drink",
+            "Transport",
+            "Shopping",
+            "Bills & Utilities",
+            "Entertainment",
+            "Health",
+            "Income",
+            "Transfer",
+            "Other"
         ]))
         let category: String
 
@@ -130,7 +49,7 @@ class SpeechViewModel {
         let merchant: String
 
         @Guide(description: "Primary event date from recording time (ISO-8601). If utterance specifies another date/time explicitly, put that in dateMentioned and leave date as recording time.")
-        let date: String
+        let date: String?
     }
 
     init() {
@@ -147,8 +66,9 @@ class SpeechViewModel {
 
                 Rules:
                 - Respond strictly using the FinanceEvent schema.
-                - type must be one of: expense, income, transfer.
-                - Infer category from merchant or phrasing; default to "other" if unsure.
+                - The 'category' must be one of: Food & Drink, Transport, Shopping, Bills & Utilities, Entertainment, Health, Income, Transfer, Other.
+                - The 'type' must be one of: expense, income, transfer.
+                - Infer category from merchant or phrasing; default to "Other" if unsure.
                 - amount must be the numeric total; parse currencies and symbols (USD, IDR, $, Rp, etc).
                 - merchant: name if present; avoid hallucination.
                 - date: do not infer; the app will set this to the recording time after generation.
