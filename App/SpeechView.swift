@@ -7,7 +7,7 @@
 
 
 import SwiftUI
-internal import AVFAudio
+import AVFAudio
 
 struct SpeechView: View {
     @State private var recogniser = SpeechRecogniser()

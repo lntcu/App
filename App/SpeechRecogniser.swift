@@ -5,8 +5,8 @@
 //  Created by user on 6/11/25.
 //
 
-import Foundation
 import AVFoundation
+import Foundation
 import Speech
 
 @Observable
@@ -46,7 +46,7 @@ class SpeechRecogniser {
         let inputNode = engine.inputNode
         let recordingFormat = inputNode.outputFormat(forBus: 0)
         inputNode.removeTap(onBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, when in
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { buffer, _ in
             self.recognitionRequest.append(buffer)
         }
         engine.prepare()

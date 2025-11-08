@@ -14,6 +14,10 @@ struct ContentView: View {
                 .imageScale(.large)
                 .foregroundStyle(.tint)
             Text("Hello, world!")
+            NavigationLink("Speech recognition") {
+                SpeechView()
+            }
+            .buttonStyle(.borderedProminent)
         }
         .padding()
     }
