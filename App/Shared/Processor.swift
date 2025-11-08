@@ -5,15 +5,15 @@
 //  Created by user on 6/11/25.
 //
 
-import Combine
 import UIKit
 @preconcurrency import Vision
 import VisionKit
 
-class Processor: ObservableObject {
-    @Published var isProcessing = false
-    @Published var extracted = ""
-    @Published var error: Error?
+@Observable
+class Processor {
+    var isProcessing = false
+    var extracted = ""
+    var error: Error?
 
     func process(_ image: UIImage) async throws -> String {
         return try await withCheckedThrowingContinuation { continuation in

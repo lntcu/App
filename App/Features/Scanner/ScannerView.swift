@@ -10,7 +10,7 @@ import VisionKit
 import SwiftData
 
 struct ScannerView: View {
-    @StateObject private var processor = Processor()
+    @State private var processor = Processor()
     @State private var showScanner = false
     @State private var scannedImages: [UIImage] = []
     @State private var processedImage: UIImage?
