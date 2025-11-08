@@ -17,6 +17,9 @@ struct ContentView: View {
             NavigationLink("Speech recognition") {
                 SpeechView()
             }
+            NavigationLink("Vision recognition") {
+                ScannerView()
+            }
             .buttonStyle(.borderedProminent)
         }
         .padding()
