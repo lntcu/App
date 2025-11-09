@@ -4,6 +4,7 @@ import SwiftUI
 
 struct SpeechView: View {
     @State private var viewModel = SpeechViewModel()
+    @Environment(\.modelContext) private var modelContext
     
     var body: some View {
         VStack(spacing: 12) {
@@ -18,7 +19,7 @@ struct SpeechView: View {
                 Button(viewModel.listening ? "Stop Recording" : "Start Recording",
                        systemImage: viewModel.listening ? "microphone.slash" : "microphone") {
                     if viewModel.listening {
-                        viewModel.stopRecordingAndExtract()
+                        viewModel.stopRecordingAndExtract(modelContext: modelContext)
                     } else {
                         viewModel.startRecording()
                     }
@@ -32,15 +33,14 @@ struct SpeechView: View {
                 }
             }
 
-            if !viewModel.generatedJSON.isEmpty {
-                Text("Generated JSON")
+            if !viewModel.statusMessage.isEmpty {
+                Text("Status")
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 // Show pretty JSON
                 ScrollView {
-                    Text(viewModel.generatedJSON)
-                        .font(.system(.body, design: .monospaced))
+                    Text(viewModel.statusMessage)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 .frame(maxHeight: 240)

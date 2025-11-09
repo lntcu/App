@@ -34,8 +34,7 @@ class FinanceService {
         )
     }
 
-    func extract(from transcript: String, recordingStart: Date) async throws -> FinanceEvent {
-        let isoDate = iso8601String(from: recordingStart)
+    func extract(from transcript: String, recordingStart: Date) async throws -> FinanceEventDTO {
         let prompt = Prompt {
             """
             Transcript:
@@ -53,7 +52,7 @@ class FinanceService {
 
         let result = try await session.respond(
             to: prompt,
-            generating: FinanceEvent.self,
+            generating: FinanceEventDTO.self,
             includeSchemaInPrompt: true,
             options: GenerationOptions(
                 sampling: .greedy,
@@ -62,9 +61,7 @@ class FinanceService {
             )
         )
         
-        var event = result.content
-        event.date = isoDate
-        return event
+        return result.content
     }
 
     private func iso8601String(from date: Date) -> String {

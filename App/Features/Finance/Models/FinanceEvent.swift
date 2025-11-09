@@ -37,4 +37,20 @@ final class FinanceEvent {
         self.merchant = merchant
         self.date = date
     }
+
+    convenience init(from dto: FinanceEventDTO, recordingDate: Date) {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let eventDate = formatter.date(from: dto.date ?? "") ?? recordingDate
+
+        self.init(
+            type: dto.type,
+            category: dto.category,
+            item: dto.item,
+            amount: dto.amount,
+            currency: dto.currency,
+            merchant: dto.merchant,
+            date: eventDate
+        )
+    }
 }

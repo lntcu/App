@@ -10,7 +10,9 @@ import VisionKit
 import SwiftData
 
 struct ScannerView: View {
+    @Environment(\.modelContext) private var modelContext
     @State private var processor = Processor()
+    @State private var financeService = FinanceService()
     @State private var showScanner = false
     @State private var scannedImages: [UIImage] = []
     @State private var processedImage: UIImage?
@@ -57,11 +59,9 @@ struct ScannerView: View {
                     if !extracted.isEmpty && !isProcessing {
                         VStack {
                             HStack {
-                                Text("Text Extracted")
+                                Text("Success")
                                     .font(.headline)
                                 Spacer()
-                                Text("\(extracted.count) characters")
-                                    .foregroundStyle(.secondary)
                             }
                             Text(extracted)
                         }
@@ -100,10 +100,18 @@ struct ScannerView: View {
         processedImage = firstImage
         do {
             step = "Recognizing text..."
-            extracted = try await processor.process(firstImage)
-            if extracted.isEmpty {
+            let text = try await processor.process(firstImage)
+            if text.isEmpty {
                 throw DocumentProcessorError.noTextFound
             }
+            
+            step = "Extracting financial event..."
+            let eventDTO = try await financeService.extract(from: text, recordingStart: Date())
+            let event = FinanceEvent(from: eventDTO, recordingDate: Date())
+            modelContext.insert(event)
+            try modelContext.save()
+            
+            extracted = "Successfully saved event."
             step = ""
         } catch {
             errorMessage = error.localizedDescription

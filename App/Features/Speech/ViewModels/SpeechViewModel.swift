@@ -3,12 +3,13 @@
 import AVFAudio
 import FoundationModels
 import SwiftUI
+import SwiftData
 
 @Observable
 class SpeechViewModel {
     var finalizedTranscript: String = ""
     var volatileTranscript: String = ""
-    var generatedJSON: String = ""
+    var statusMessage: String = ""
     var isExtracting: Bool = false
     var errorMessage: String = ""
     var listening: Bool = false
@@ -24,7 +25,7 @@ class SpeechViewModel {
 
     func startRecording() {
         errorMessage = ""
-        generatedJSON = ""
+        statusMessage = ""
         finalizedTranscript = ""
         volatileTranscript = ""
         recordingStart = Date()
@@ -45,7 +46,7 @@ class SpeechViewModel {
         }
     }
 
-    func stopRecordingAndExtract() {
+    func stopRecordingAndExtract(modelContext: ModelContext) {
         recogniser.stop()
         listening = false
         guard let start = recordingStart else {
@@ -55,27 +56,24 @@ class SpeechViewModel {
         let transcript = finalizedTranscript.isEmpty ? recogniser.text : finalizedTranscript
 
         Task {
-            await extractFinanceEvent(from: transcript, recordingStart: start)
+            await extractFinanceEvent(from: transcript, recordingStart: start, modelContext: modelContext)
         }
     }
 
-    private func extractFinanceEvent(from transcript: String, recordingStart: Date) async {
+    private func extractFinanceEvent(from transcript: String, recordingStart: Date, modelContext: ModelContext) async {
         isExtracting = true
         defer { isExtracting = false }
         errorMessage = ""
 
         do {
-            let event = try await financeService.extract(from: transcript, recordingStart: recordingStart)
-            generatedJSON = try prettyJSON(from: event)
+            let eventDTO = try await financeService.extract(from: transcript, recordingStart: recordingStart)
+            let event = FinanceEvent(from: eventDTO, recordingDate: recordingStart)
+            modelContext.insert(event)
+            try modelContext.save()
+            statusMessage = "Successfully saved event."
         } catch {
             errorMessage = "Extraction failed: \(error.localizedDescription)"
         }
-    }
-    
-    private func prettyJSON<T: Encodable>(from value: T) throws -> String {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        return try String(data: encoder.encode(value), encoding: .utf8) ?? "{}"
     }
 }
 
